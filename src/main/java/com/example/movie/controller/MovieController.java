@@ -23,25 +23,21 @@ public class MovieController {
     @Value("${api.key}")
     private String apiKey;
 
+
     @Autowired
     private RestTemplate restTemplate;
 
     // list of movies
     @GetMapping
-    public List<Movie> movies() {
-
-        List<Movie> movieList = new ArrayList<>();
+    public List<MovieOverview> movies() {
         MoviesDto moviesDto = restTemplate.getForObject("https://api.themoviedb.org/3/discover/movie?api_key=" + apiKey, MoviesDto.class);
-        moviesDto.getResults().forEach(
-                (movie) -> movieList.add(new Movie(movie.getId(), movie.getTitle(), movie.getOverview()))
-        );
-        return movieList;
+        return moviesDto.getResults();
     }
 
     @RequestMapping("/{movieId}")
-    public Movie getMovieInfo(@PathVariable("movieId") String movieId) {
+    public MovieOverview getMovieInfo(@PathVariable("movieId") String movieId) {
         MovieOverview movieOverview = restTemplate.getForObject("https://api.themoviedb.org/3/movie/" + movieId + "?api_key=" + apiKey, MovieOverview.class);
-        return new Movie(movieId, movieOverview.getTitle(), movieOverview.getOverview());
+        return movieOverview;
     }
 
 

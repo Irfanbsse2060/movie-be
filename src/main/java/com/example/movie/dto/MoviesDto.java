@@ -9,5 +9,4 @@ import java.util.List;
 public class MoviesDto {
     private String page;
     private List<MovieOverview> results;
-
 }
