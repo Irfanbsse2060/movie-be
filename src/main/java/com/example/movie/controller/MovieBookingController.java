@@ -29,9 +29,14 @@ public class MovieBookingController {
         this.movieBookingService = movieBookingService;
     }
 
+    @GetMapping(value = "/movies/booking")
+    public List<MovieBooking> getMoviesBooking() {
+        return movieBookingService.getAllMovieBooking();
+    }
+
     @GetMapping(value = "/movies/{movieId}/booking")
     public List<MovieBooking> getMovieBookingsByMovieId(@PathVariable("movieId") String movieId) {
-        return movieBookingService.getAllMovieBooking(movieId);
+        return movieBookingService.getBookingsOfAMovie(movieId);
     }
 
     @PostMapping(value="/movies/{movieId}/booking")
@@ -44,8 +49,10 @@ public class MovieBookingController {
         return movieBookingService.updateMovieBooking(movieBooking);
     }
 
-    @DeleteMapping(path = "/movies/{movieId}/booking/{bookingId}")
-    public void deleteMovieBooking(@PathVariable("movieId") String movieId, @PathVariable("bookingId") Integer bookingId) {
-         movieBookingService.deleteMovieBooking(movieId, bookingId);
+    @DeleteMapping(path = "/movies/booking/{bookingId}")
+    public void deleteMovieBooking(@PathVariable("bookingId") Integer bookingId) {
+         movieBookingService.deleteMovieBooking(bookingId);
     }
+
+
 }

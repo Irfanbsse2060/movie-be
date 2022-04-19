@@ -18,5 +18,5 @@ public class MovieBooking {
     private  String firstName;
     private  String lastName;
     private  String movieId;
-
+    private  String bookedDate;
 }

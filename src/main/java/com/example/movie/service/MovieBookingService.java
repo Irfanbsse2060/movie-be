@@ -17,7 +17,11 @@ public class MovieBookingService {
         this.movieBookingRepository = movieBookingRepository;
     }
 
-    public List<MovieBooking> getAllMovieBooking(String movieId) {
+    public List<MovieBooking> getAllMovieBooking() {
+        return movieBookingRepository.findAll();
+    }
+
+    public List<MovieBooking> getBookingsOfAMovie(String movieId) {
         return movieBookingRepository.findAllByMovieId(movieId);
     }
 
@@ -25,9 +29,9 @@ public class MovieBookingService {
         return movieBookingRepository.save(movieBooking);
     }
 
-    public void deleteMovieBooking(String movieId, Integer movieBookingId) {
-        MovieBooking movieBooking = movieBookingRepository.findByMovieIdAndAndId(movieId, movieBookingId);
-        movieBookingRepository.delete(movieBooking);
+    public void deleteMovieBooking(Integer movieBookingId) {
+        Optional<MovieBooking> movieBooking = movieBookingRepository.findById(movieBookingId);
+        movieBooking.ifPresent(movieBookingRepository::delete);
     }
 
     public Optional<MovieBooking> updateMovieBooking(MovieBooking movieBooking) {

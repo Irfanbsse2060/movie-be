@@ -7,6 +7,5 @@ import java.util.List;
 
 @Repository
 public interface MovieBookingRepository extends JpaRepository<MovieBooking, Integer> {
-    public List<MovieBooking> findAllByMovieId(String movieId);
-    public MovieBooking findByMovieIdAndAndId(String movieId, Integer id);
+    List<MovieBooking> findAllByMovieId(String movieId);
 }
