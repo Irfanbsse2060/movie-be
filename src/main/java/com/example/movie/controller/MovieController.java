@@ -5,13 +5,11 @@ import com.example.movie.dto.MoviesDto;
 import com.example.movie.models.MovieOverview;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.movie.models.Movie;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -34,8 +32,8 @@ public class MovieController {
 
     // list of movies
     @GetMapping("/search/movies")
-    public List<MovieOverview> searchMovies(@RequestParam(required = true) String query ) {
-        MoviesDto moviesDto = restTemplate.getForObject("https://api.themoviedb.org/3/search/movie?api_key=" + apiKey+"&query="+query, MoviesDto.class);
+    public List<MovieOverview> searchMovies(@RequestParam(required = true) String query) {
+        MoviesDto moviesDto = restTemplate.getForObject("https://api.themoviedb.org/3/search/movie?api_key=" + apiKey + "&query=" + query, MoviesDto.class);
         return moviesDto.getResults();
     }
 
@@ -46,8 +44,8 @@ public class MovieController {
     }
 
     @GetMapping("/movies/{movieId}/reviews")
-    public MovieReviewDto getMovieReviews(@PathVariable("movieId") String movieId, @RequestParam(defaultValue="1") Integer page ) {
-        MovieReviewDto movieReviewDto = restTemplate.getForObject("https://api.themoviedb.org/3/movie/" + movieId +"/reviews" + "?api_key=" + apiKey+"&page="+page,
+    public MovieReviewDto getMovieReviews(@PathVariable("movieId") String movieId, @RequestParam(defaultValue = "1") Integer page) {
+        MovieReviewDto movieReviewDto = restTemplate.getForObject("https://api.themoviedb.org/3/movie/" + movieId + "/reviews" + "?api_key=" + apiKey + "&page=" + page,
                 MovieReviewDto.class);
         return movieReviewDto;
     }
