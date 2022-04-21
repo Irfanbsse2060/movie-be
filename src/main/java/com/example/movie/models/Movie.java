@@ -18,6 +18,7 @@ public class Movie {
     private String poster_path;
     private String original_title;
     private String release_date;
+    private String vote_average;
     private String original_language;
     private Boolean adult;
     private Float popularity;

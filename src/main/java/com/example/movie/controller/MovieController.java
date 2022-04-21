@@ -1,54 +1,43 @@
 package com.example.movie.controller;
 
 import com.example.movie.dto.MovieReviewDto;
-import com.example.movie.dto.MoviesDto;
 import com.example.movie.models.MovieOverview;
+import com.example.movie.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import com.example.movie.models.Movie;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1")
+@RequestMapping(value = "/api/v1/movies")
 public class MovieController {
 
-    @Value("${api.key}")
-    private String apiKey;
-
+    private final MovieService movieService;
 
     @Autowired
-    private RestTemplate restTemplate;
+    public MovieController(MovieService movieService) {
+        this.movieService = movieService;
+    }
 
-    // list of movies
-    @GetMapping("/movies")
+    @GetMapping()
     public List<MovieOverview> movies() {
-        MoviesDto moviesDto = restTemplate.getForObject("https://api.themoviedb.org/3/discover/movie?api_key=" + apiKey, MoviesDto.class);
-        return moviesDto.getResults();
+        return movieService.movies();
     }
 
-    // list of movies
-    @GetMapping("/search/movies")
+    @GetMapping("/search")
     public List<MovieOverview> searchMovies(@RequestParam(required = true) String query) {
-        MoviesDto moviesDto = restTemplate.getForObject("https://api.themoviedb.org/3/search/movie?api_key=" + apiKey + "&query=" + query, MoviesDto.class);
-        return moviesDto.getResults();
+        return movieService.searchMovies(query);
     }
 
-    @GetMapping("/movies/{movieId}")
+    @GetMapping("/{movieId}")
     public Movie getMovieInfo(@PathVariable("movieId") String movieId) {
-        Movie movie = restTemplate.getForObject("https://api.themoviedb.org/3/movie/" + movieId + "?api_key=" + apiKey, Movie.class);
-        return movie;
+        return movieService.getMovieInfo(movieId);
     }
 
-    @GetMapping("/movies/{movieId}/reviews")
+    @GetMapping("/{movieId}/reviews")
     public MovieReviewDto getMovieReviews(@PathVariable("movieId") String movieId, @RequestParam(defaultValue = "1") Integer page) {
-        MovieReviewDto movieReviewDto = restTemplate.getForObject("https://api.themoviedb.org/3/movie/" + movieId + "/reviews" + "?api_key=" + apiKey + "&page=" + page,
-                MovieReviewDto.class);
-        return movieReviewDto;
+        return movieService.getMovieReviews(movieId, page);
     }
-
-
 }

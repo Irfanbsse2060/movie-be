@@ -1,6 +1,8 @@
 package com.example.movie.service;
+
+import com.example.movie.exception.ApiRequestException;
 import com.example.movie.models.MovieBooking;
-import com.example.movie.models.MovieBookingRepository;
+import com.example.movie.Repository.MovieBookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,17 +14,30 @@ public class MovieBookingService {
 
     private final MovieBookingRepository movieBookingRepository;
 
+    private void validateBooking(MovieBooking movieBooking) {
+        String bookingErrorMessage = "You can't book more than 10 seats per movie";
+        if (movieBooking.getNumberOfSeats() > 10)
+            throw new ApiRequestException(bookingErrorMessage);
+        List<MovieBooking> existingMovieBooking = movieBookingRepository.findAllByMovieIdAndEmail(movieBooking.getMovieId(), movieBooking.getEmail());
+        Integer bookingCount = 0;
+        for (int i = 0; i < existingMovieBooking.size(); i++) {
+            bookingCount += existingMovieBooking.get(i).getNumberOfSeats();
+        }
+        bookingCount += movieBooking.getNumberOfSeats();
+        if (bookingCount > 10) {
+            throw new ApiRequestException(bookingErrorMessage);
+        }
+    }
+
     @Autowired
-    public MovieBookingService( MovieBookingRepository movieBookingRepository) {
+    public MovieBookingService(MovieBookingRepository movieBookingRepository) {
         this.movieBookingRepository = movieBookingRepository;
     }
 
-    public List<MovieBooking> getAllMovieBooking( String searchQuery) {
-        if(searchQuery != null && searchQuery.length()>0)
-        {
+    public List<MovieBooking> getAllMovieBooking(String searchQuery) {
+        if (searchQuery != null && searchQuery.length() > 0) {
             return movieBookingRepository.findAllByKeyword(searchQuery);
         }
-
         return movieBookingRepository.findAll();
     }
 
@@ -31,17 +46,7 @@ public class MovieBookingService {
     }
 
     public MovieBooking insertMovieBooking(MovieBooking movieBooking) {
-        List<MovieBooking> existingMovieBooking = movieBookingRepository.findAllByMovieIdAndEmail(movieBooking.getMovieId(), movieBooking.getEmail());
-        Integer bookingCount = 0;
-        for(int i =0; i<existingMovieBooking.size();i++)
-        {
-            bookingCount += existingMovieBooking.get(i).getNumberOfSeats();
-        }
-        bookingCount += movieBooking.getNumberOfSeats();
-        if(bookingCount>10)
-        {
-            return movieBooking; // TODO: return error can't have more than 10 seats per movie
-        }
+        validateBooking(movieBooking);
         return movieBookingRepository.save(movieBooking);
     }
 
@@ -50,19 +55,17 @@ public class MovieBookingService {
         movieBooking.ifPresent(movieBookingRepository::delete);
     }
 
-    public Optional<MovieBooking> updateMovieBooking(MovieBooking movieBooking) {
-        Optional<MovieBooking> existingMovieBooking = movieBookingRepository.findById(movieBooking.getId());
-        if(existingMovieBooking.isPresent())
-        {
-            existingMovieBooking.get().setEmail(movieBooking.getEmail());
-            existingMovieBooking.get().setFirstName(movieBooking.getFirstName());
-            existingMovieBooking.get().setLastName(movieBooking.getLastName());
-            existingMovieBooking.get().setNumberOfSeats(movieBooking.getNumberOfSeats());
-            movieBookingRepository.save(existingMovieBooking.get());
+    public MovieBooking updateMovieBooking(MovieBooking movieBooking) {
+        Optional<MovieBooking> optionalMovieBooking = movieBookingRepository.findById(movieBooking.getId());
+        if (optionalMovieBooking.isPresent()) {
+            MovieBooking existingMovieBooking = optionalMovieBooking.get();
+            existingMovieBooking.setEmail(movieBooking.getEmail());
+            existingMovieBooking.setFirstName(movieBooking.getFirstName());
+            existingMovieBooking.setLastName(movieBooking.getLastName());
+            existingMovieBooking.setNumberOfSeats(movieBooking.getNumberOfSeats());
+            movieBookingRepository.save(existingMovieBooking);
             return existingMovieBooking;
-        }
-        else
-            return Optional.empty();
-
+        } else
+            throw new ApiRequestException("Booking doesn't exist");
     }
 }
