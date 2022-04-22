@@ -12,7 +12,8 @@ Website: https://movie-fe.herokuapp.com/
 
 ## How to run?
 
-Its typical spring boot app. To run this application you need java and postgres.
+- Its typical spring boot app. To run this application you need java and postgres.
+- Setup the env variable defined in application.properties file 
 
 For running postgres:
 - Either you can download and run directly on your machine
