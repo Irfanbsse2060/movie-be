@@ -1,16 +1,10 @@
 package com.example.movie.models;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class Movie {
     private String id;
     private String title;
@@ -35,16 +29,12 @@ public class Movie {
 }
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 class Genre {
     private Long id;
     private  String name;
 }
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 class ProductionCompany {
     private Long id;
     private  String logo_path;
@@ -53,8 +43,6 @@ class ProductionCompany {
 }
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 class ProductionCountry {
     private Long id;
     private  String name;
